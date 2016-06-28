@@ -13,7 +13,7 @@
           (let [keys [:client-id :client-secret :domain]]
             (zipmap keys (map #(->> %
                                     name
-                                    (str "auth0")
+                                    (str "auth0-")
                                     keyword
                                     env)
                               keys))))
