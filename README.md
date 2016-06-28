@@ -1,4 +1,5 @@
-# phonsole-server
+# phonsole-server 
+[![Build Status](https://travis-ci.org/DaveWM/phonsole-server.svg?branch=master)](https://travis-ci.org/DaveWM/phonsole-server)
 
 The server for the phonsole application. Uses [http-kit](http://www.http-kit.org/) and [sente](https://github.com/ptaoussanis/sente).
 
