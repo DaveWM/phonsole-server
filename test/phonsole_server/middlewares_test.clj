@@ -1,23 +1,25 @@
 (ns phonsole-server.middlewares-test
   (:require [phonsole-server.middlewares :as middlewares]
-            [phonsole-server.credentials :as credentials]
             [clojure.test :refer :all]
             [jerks-whistling-tunes.core :as jwt]
             [jerks-whistling-tunes.sign :refer [hs256 sign]]
             [clj-time.core :refer [now plus minus days]]
             [clojure.string :refer [includes?]]))
 
+(def credentials {:client-secret "verysecretsecret"
+                  :client-id "clientid"
+                  :domain "domain"})
 
 (defn make-token [& [claims]]
-  (-> (merge  {:aud  (:client-id credentials/auth0)
+  (-> (merge  {:aud  (:client-id credentials)
                :exp (plus (now) (days 1))
-               :iss (:domain credentials/auth0)}
+               :iss (:domain credentials)}
               claims)
       (update :exp #(quot (.getMillis %) 1000))
-      (jwt/encode (hs256 (:client-secret credentials/auth0)))))
+      (jwt/encode (hs256 (:client-secret credentials)))))
 
 (deftest authenticate
-  (let [process-request (middlewares/authenticate identity)]
+  (let [process-request (middlewares/authenticate credentials identity)]
     (is (function? process-request) "middleware function should return a function")
     (let [valid-token (make-token)] 
       (testing "should return the request when the auth token is given as a header"
@@ -41,6 +43,7 @@
   (let [process-request (middlewares/identify (fn [url {:keys [body content-type]}] (when (and (includes? body "token")
                                                                                                (= content-type :json))
                                                                                       {:body "{\"a\": 1}"}))
+                                              credentials
                                               identity)]
     (is (function? process-request))
     (is (= {:a 1} (:user-info (process-request {:token "token"}))))))

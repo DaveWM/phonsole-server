@@ -12,6 +12,7 @@
             [cheshire.core :refer [generate-string]]
             [phonsole-server.middlewares :refer [authenticate identify]]
             [phonsole-server.uid-helpers :refer [uid-delimiter viewer-identifier parse-uid-string get-differences]]
+            [phonsole-server.credentials :refer [get-auth0-credentials]]
             [clj-http.client :as http]))
 
 
@@ -78,12 +79,14 @@
 
 (defn start-server! []
   (println "Started on port" port)
-  (let [bound-identify (partial identify http/post)]
+  (let [credentials (get-auth0-credentials)
+        bound-identify (partial identify http/post credentials)
+        bound-authenticate (partial authenticate credentials)]
     (reset! server (run-server
                     (-> #'routes
                         wrap-reload
                         bound-identify
-                        authenticate
+                        bound-authenticate
                         ring.middleware.keyword-params/wrap-keyword-params
                         ring.middleware.params/wrap-params)
                     {:port port}))))
