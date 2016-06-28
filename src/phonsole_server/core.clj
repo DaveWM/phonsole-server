@@ -13,7 +13,8 @@
             [phonsole-server.middlewares :refer [authenticate identify]]
             [phonsole-server.uid-helpers :refer [uid-delimiter viewer-identifier parse-uid-string get-differences]]
             [phonsole-server.credentials :refer [get-auth0-credentials]]
-            [clj-http.client :as http]))
+            [clj-http.client :as http]
+            [environ.core :refer [env]]))
 
 
 (let [{:keys [ch-recv send-fn ajax-post-fn ajax-get-or-ws-handshake-fn connected-uids]}
@@ -73,7 +74,7 @@
   (GET  "/chsk" req (ring-ajax-get-or-ws-handshake req))
   (POST "/chsk" req (ring-ajax-post req)))
 
-(def port 8080)
+(def port (Integer. (or (env :port) 8080)))
 (defonce server (atom nil))
 
 
