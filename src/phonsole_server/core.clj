@@ -19,7 +19,7 @@
 
 (let [{:keys [ch-recv send-fn ajax-post-fn ajax-get-or-ws-handshake-fn connected-uids]}
       (sente/make-channel-socket! sente-web-server-adapter {:user-id-fn (fn [request]
-                                                                          (str (:user-id request)
+                                                                          (str (get-in request [:user-info :user_id])
                                                                                uid-delimiter
                                                                                (:client-id request)
                                                                                (when (get-in request [:params :is-viewer])
@@ -33,17 +33,20 @@
 
 (defn get-connection-changed-messages [old-uids new-uids]
   "Returns a list of events to send. Each event is a vector of [uid event]"
-  (let [[old-senders new-senders] (->> [old-uids new-uids]
-                                       (map (partial map parse-uid-string))
-                                       (map (partial remove :is-viewer?)))
-        user-info-map (group-by :user-id new-senders)
-        to-notify (->> (get-differences old-senders new-senders)
+  (let [[old-user-infos new-user-infos] (->> [old-uids new-uids]
+                                             (map (partial map parse-uid-string))
+                                             (into []))
+        user-info-map (group-by :user-id new-user-infos)
+        to-notify (->> (get-differences old-user-infos new-user-infos)
                        (map :user-id)
                        distinct
                        (mapcat (partial get user-info-map)))
         messages (->> to-notify
                       (map (fn [user-info] [(:uid user-info)
-                                            [:clients/connected {:connected-clients (get user-info-map (:user-id user-info))}]]))
+                                            [:clients/connected {:connected-clients (->> (:user-id user-info)
+                                                                                         (get user-info-map)
+                                                                                         (remove :is-viewer?)
+                                                                                         (into []))}]]))
                       )
         ]
     messages))
