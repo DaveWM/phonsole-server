@@ -58,14 +58,17 @@
              ))
 
 (go-loop []
-  (let [{:keys [id event ?data uid]} (<! ch-chsk)
-        sending-user-id (:user-id (parse-uid-string uid))
+  (let [{:keys [id ?data uid] [type data :as event] :event} (<! ch-chsk)
+        sending-user (parse-uid-string uid)
         send-to-users (->> (:any @connected-uids)
                            (map parse-uid-string)
-                           (filter #(= sending-user-id (:user-id %))))]
+                           (filter #(= (:user-id sending-user) (:user-id %))))]
+    (println event)
     (when id
       (doseq [{:keys [uid]} send-to-users]
-        (chsk-send! uid event))))
+        (chsk-send! uid (if (map? data)
+                          [type (assoc data :sender sending-user)]
+                          event)))))
   (recur))
 
 (defn app [req]
