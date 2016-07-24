@@ -46,7 +46,8 @@
                                             [:clients/connected {:connected-clients (->> (:user-id user-info)
                                                                                          (get user-info-map)
                                                                                          (remove :is-viewer?)
-                                                                                         (into []))}]]))
+                                                                                         (map #(identity [(:client-id %) %]))
+                                                                                         (into {}))}]]))
                       )
         ]
     messages))
