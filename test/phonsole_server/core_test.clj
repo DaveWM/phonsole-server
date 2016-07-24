@@ -12,7 +12,7 @@
       (is (= uid "abc::123"))
       (is (= event :clients/connected))
       (is (= 1 (count user-infos)))
-      (is (= "abc::123" (get-in user-infos [0 :uid])))
+      (is (= "abc::123" (get-in user-infos ["123" :uid])))
       ))
   (testing "it should return a message for a newly disconnected user"
     (let [messages (get-connection-changed-messages ["abc::123" "abc::345"] ["abc::123"])
@@ -21,7 +21,7 @@
       (is (= uid "abc::123"))
       (is (= event :clients/connected))
       (is (= 1 (count user-infos)))
-      (is (= "abc::123" (get-in user-infos [0 :uid])))
+      (is (= "abc::123" (get-in user-infos ["123" :uid])))
       ))
   (testing "it should not send any messages if no connected clients are affected"
     (let [messages (get-connection-changed-messages ["abc::123" "def::345"] ["def::345"])]
@@ -34,7 +34,8 @@
       (is (= 2 (count messages)))
       (is (some? uid))
       (is (= 2 (count user-infos)))
-      (is (= 2 (->> (map :uid user-infos)
+      (is (= 2 (->> (vals user-infos)
+                    (map :uid)
                     set
                     (intersection #{"abc::123" "abc::456"})
                     count)))
