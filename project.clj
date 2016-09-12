@@ -3,7 +3,7 @@
   :url "https://phonsole-server.herokuapp.com/"
   :license {:name "GPL V3"
             :url "https://www.gnu.org/licenses/gpl-3.0.en.html"}
-  :dependencies [[org.clojure/clojure "1.8.0"]
+  :dependencies [[org.clojure/clojure "1.9.0-alpha12"]
                  [http-kit "2.1.18"]
                  [com.taoensso/sente "1.11.0-alpha4"]
                  [ring/ring-devel "1.4.0"]
