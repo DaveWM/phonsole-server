@@ -22,7 +22,8 @@
                              jwt/exp)]
       (if (not valid?)
         (-> {:status 401
-             :body (generate-string {:reason "Auth token not found or is invalid"})})
+             :headers {"Content-Type" "application/json"}
+             :body (generate-string {:message "Auth token not found or is invalid"})})
         (handler (assoc request :token token))))))
 
 (defn identify [http-post credentials handler]

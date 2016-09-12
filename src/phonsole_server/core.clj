@@ -78,8 +78,14 @@
    :body (generate-string {:test  "Hello World!"
                            :user-id (get-in req [:user-info :user_id])})})
 
+(defn auth [req]
+  {:status 200
+   :headers {"Content-Type" "application/json"}
+   :body (generate-string {:message "Auth token correct"})})
+
 (defroutes routes
   (GET "/" req app)
+  (GET "/auth" req auth)
   (GET  "/chsk" req (ring-ajax-get-or-ws-handshake req))
   (POST "/chsk" req (ring-ajax-post req)))
 
