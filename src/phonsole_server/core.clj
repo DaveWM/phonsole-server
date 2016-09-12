@@ -65,7 +65,7 @@
                            (map parse-uid-string)
                            (filter #(= (:user-id sending-user) (:user-id %))))]
     (println event)
-    (when id
+    (when (and id (not= "chsk" (namespace id)))
       (doseq [{:keys [uid]} send-to-users]
         (chsk-send! uid (if (map? data)
                           [type (assoc data :sender sending-user)]
