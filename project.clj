@@ -5,7 +5,7 @@
             :url "https://www.gnu.org/licenses/gpl-3.0.en.html"}
   :dependencies [[org.clojure/clojure "1.8.0"]
                  [http-kit "2.1.18"]
-                 [com.taoensso/sente "1.10.0"]
+                 [com.taoensso/sente "1.11.0-alpha4"]
                  [ring/ring-devel "1.4.0"]
                  [ring/ring-core "1.4.0"]
                  [compojure "1.5.0"]
