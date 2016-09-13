@@ -23,19 +23,19 @@
     (is (function? process-request) "middleware function should return a function")
     (let [valid-token (make-token)] 
       (testing "should return the request when the auth token is given as a header"
-        (let [valid-response (process-request {:body "test" :status 200 :headers {"Authorization" (str "Bearer " valid-token)} :query-params {}})]
+        (let [valid-response (process-request {:body "test" :status 200 :headers {"authorization" (str "Bearer " valid-token)} :query-params {}})]
           (is (= "test" (:body valid-response)))
           (is (= 200 (:status valid-response)))))
       (testing "should return the request when the auth token is given as a query param"
           (let [valid-response (process-request {:body "test" :status 200 :headers {} :query-params {"Authorization" valid-token}})]
             (is (= "test" (:body valid-response)))
             (is (= 200 (:status valid-response)))))
-      (is (= valid-token (:token (process-request {:body "test" :status 200 :headers {"Authorization" valid-token}}))) "it should add a :token key to the request"))
+      (is (= valid-token (:token (process-request {:body "test" :status 200 :headers {"authorization" valid-token}}))) "it should add a :token key to the request"))
     (testing "an invalid token should return a 401 response"
-      (is (= 401 (:status (process-request {:body "test" :status 200 :headers {"Authorization" "invalid-token"}}))))
-      (is (= 401 (:status (process-request {:body "test" :status 200 :headers {"Authorization" (make-token {:aud "invalid"})}}))) "invalid aud claim")
-      (is (= 401 (:status (process-request {:body "test" :status 200 :headers {"Authorization" (make-token {:exp (minus (now) (days 1))})}}))) "expired token")
-      (is (= 401 (:status (process-request {:body "test" :status 200 :headers {"Authorization" (make-token {:iss "not valid"})}})))) "invalid issuer"
+      (is (= 401 (:status (process-request {:body "test" :status 200 :headers {"authorization" "invalid-token"}}))))
+      (is (= 401 (:status (process-request {:body "test" :status 200 :headers {"authorization" (make-token {:aud "invalid"})}}))) "invalid aud claim")
+      (is (= 401 (:status (process-request {:body "test" :status 200 :headers {"authorization" (make-token {:exp (minus (now) (days 1))})}}))) "expired token")
+      (is (= 401 (:status (process-request {:body "test" :status 200 :headers {"authorization" (make-token {:iss "not valid"})}})))) "invalid issuer"
       )))
 
 ;TODO use a mocking framework or similar for this test
