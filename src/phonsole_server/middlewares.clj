@@ -8,7 +8,7 @@
   "Authenticates using auth token in Authorization header, or query param if header not set. Adds the auth token onto the request as :token"
   (fn [request]
     (let [{:keys [headers query-params]} request
-          header (-> (get headers "Authorization")
+          header (-> (get headers "authorization")
                      (or "")
                      (str/replace #"^\s*Bearer\s+" ""))
           url-param (get query-params "Authorization")
