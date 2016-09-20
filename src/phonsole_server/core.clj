@@ -14,7 +14,8 @@
             [phonsole-server.uid-helpers :refer [uid-delimiter viewer-identifier parse-uid-string get-differences]]
             [phonsole-server.credentials :refer [get-auth0-credentials]]
             [clj-http.client :as http]
-            [environ.core :refer [env]]))
+            [environ.core :refer [env]]
+            [ring.middleware.cors :refer [wrap-cors]]))
 
 
 (let [{:keys [ch-recv send-fn ajax-post-fn ajax-get-or-ws-handshake-fn connected-uids]}
@@ -104,8 +105,11 @@
                         bound-identify
                         bound-authenticate
                         ring.middleware.keyword-params/wrap-keyword-params
-                        ring.middleware.params/wrap-params)
-                    {:port port}))))
+                        ring.middleware.params/wrap-params
+                        (wrap-cors :access-control-allow-origin [#".*"]
+                                   :access-control-allow-methods [:get]
+                                   :access-control-allow-credentials "true"))
+            {:port port}))))
 
 (defn stop-server! []
   (when-not (nil? @server)

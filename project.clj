@@ -14,7 +14,8 @@
                  [cheshire "5.6.2"]
                  [clj-time "0.12.0"]
                  [jerks-whistling-tunes "0.2.4"]
-                 [environ "1.0.3"]]
+                 [environ "1.0.3"]
+                 [ring-cors "0.1.8"]]
   :main ^:skip-aot phonsole-server.core
   :target-path "target/%s"
   :profiles {:uberjar {:aot :all}})
